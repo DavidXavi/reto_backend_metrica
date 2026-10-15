@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Contracts/Contracts.csproj" />
+    <Project Path="src/Migrador/Migrador.csproj" />
+  </Folder>
+  <Folder Name="/src/Auth/">
+    <Project Path="src/Auth/Auth.Api/Auth.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/BuildingBlocks.Core/BuildingBlocks.Core.csproj" />
+    <Project Path="src/BuildingBlocks/BuildingBlocks.Infrastructure/BuildingBlocks.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/CargaMasiva/">
+    <Project Path="src/CargaMasiva/CargaMasiva.Application/CargaMasiva.Application.csproj" />
+    <Project Path="src/CargaMasiva/CargaMasiva.Domain/CargaMasiva.Domain.csproj" />
+    <Project Path="src/CargaMasiva/CargaMasiva.Infrastructure/CargaMasiva.Infrastructure.csproj" />
+    <Project Path="src/CargaMasiva/CargaMasiva.Worker/CargaMasiva.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/Control/">
+    <Project Path="src/Control/Control.Api/Control.Api.csproj" />
+    <Project Path="src/Control/Control.Application/Control.Application.csproj" />
+    <Project Path="src/Control/Control.Domain/Control.Domain.csproj" />
+    <Project Path="src/Control/Control.Infrastructure/Control.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Gateway/">
+    <Project Path="src/Gateway/Gateway.Api/Gateway.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Notificaciones/">
+    <Project Path="src/Notificaciones/Notificaciones.Worker/Notificaciones.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CargaMasiva.UnitTests/CargaMasiva.UnitTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,63 @@
+:root {
+  --fondo: #f6f7f9;
+  --tarjeta: #fff;
+  --texto: #1d2129;
+  --suave: #5f6673;
+  --linea: #e1e4e8;
+  --acento: #2456c9;
+  --error: #b42318;
+  font: 15px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--texto);
+  background: var(--fondo);
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 22px; margin: 0 0 12px; }
+h2 { font-size: 17px; margin: 20px 0 8px; }
+a { color: var(--acento); }
+
+.barra {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  padding: 10px 16px; background: var(--tarjeta); border-bottom: 1px solid var(--linea);
+}
+.barra nav { display: flex; gap: 12px; flex: 1; }
+.usuario { color: var(--suave); font-size: 13px; }
+
+.tarjeta {
+  background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 10px; padding: 18px;
+}
+.centro { min-height: 100vh; display: grid; place-items: center; }
+.centro .tarjeta { width: min(360px, 100%); display: grid; gap: 12px; }
+
+label { display: grid; gap: 4px; font-size: 14px; }
+input { padding: 8px 10px; border: 1px solid var(--linea); border-radius: 6px; font: inherit; }
+button {
+  padding: 8px 14px; border: 1px solid var(--acento); border-radius: 6px;
+  background: var(--acento); color: #fff; font: inherit; cursor: pointer;
+}
+button.secundario { background: transparent; color: var(--acento); }
+button:disabled { opacity: 0.5; cursor: default; }
+.error { color: var(--error); }
+
+.tabla { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--linea); }
+th { color: var(--suave); font-weight: 600; }
+.paginacion { display: flex; gap: 12px; align-items: center; margin-top: 12px; }
+
+.badge { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12.5px; background: #eef1f5; }
+.badge-EnProceso, .badge-Cargado { background: #fff4d6; }
+.badge-Finalizado { background: #e3ecff; }
+.badge-Notificado { background: #dcf5e7; }
+
+.resumen { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin: 12px 0; }
+.resumen div { border: 1px solid var(--linea); border-radius: 8px; padding: 8px; display: grid; }
+.resumen span { color: var(--suave); font-size: 13px; }
+.resumen b { font-size: 20px; }
+.linea { padding-left: 20px; }
+.linea li { margin: 4px 0; }
+.pestanas { display: flex; gap: 8px; margin: 16px 0 8px; }
+/* Detalle: la tabla crece hasta 420 px y luego hace scroll; el encabezado queda fijo */
+.tabla-scroll { max-height: 420px; overflow-y: auto; }
+.tabla-scroll thead th { position: sticky; top: 0; background: var(--tarjeta); }

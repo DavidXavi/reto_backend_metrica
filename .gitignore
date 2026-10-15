@@ -1,0 +1,31 @@
+# ---------- Secretos ----------
+# El .env real tiene las claves; solo se sube la plantilla
+.env
+.env.*
+!.env.example
+
+# ---------- .NET ----------
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+*.rsuser
+.vs/
+
+# ---------- Node / React ----------
+node_modules/
+dist/
+*.local
+npm-debug.log*
+
+# ---------- Editores y sistema operativo ----------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---------- Logs ----------
+logs/
+*.log

@@ -1,0 +1,115 @@
+# Levanta todo con: docker compose up --build
+# Variables en .env (copia .env.example)
+
+x-dotnet: &dotnet
+  ASPNETCORE_ENVIRONMENT: Production
+  ConnectionStrings__Reto: Host=postgres;Database=reto;Username=reto;Password=${POSTGRES_PASSWORD}
+  Jwt__Key: ${JWT_KEY}
+  RabbitMq__Host: rabbitmq
+  RabbitMq__Usuario: ${RABBITMQ_USUARIO}
+  RabbitMq__Clave: ${RABBITMQ_CLAVE}
+
+services:
+  # ---------- infraestructura ----------
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: reto
+      POSTGRES_USER: reto
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reto -d reto"]
+      interval: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USUARIO}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_CLAVE}
+    ports: ["5672:5672", "15672:15672"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      retries: 10
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:3.80
+    command: "server -dir=/data -filer -ip.bind=0.0.0.0"
+    ports: ["8888:8888", "9333:9333"]
+    volumes: [seaweed:/data]
+
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports: ["8025:8025", "1025:1025"]
+
+  # ---------- una sola vez: crea y actualiza la base ----------
+  migrador:
+    build: { context: ., dockerfile: src/Migrador/Dockerfile }
+    environment:
+      ConnectionStrings__Reto: Host=postgres;Database=reto;Username=reto;Password=${POSTGRES_PASSWORD}
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  # ---------- microservicios ----------
+  auth:
+    build: { context: ., dockerfile: src/Auth/Dockerfile }
+    environment:
+      <<: *dotnet
+      Semilla__Clave: ${CLAVE_SEMILLA}
+    depends_on:
+      migrador: { condition: service_completed_successfully }
+
+  control:
+    build: { context: ., dockerfile: src/Control/Dockerfile }
+    environment:
+      <<: *dotnet
+      Seaweed__FilerUrl: http://seaweedfs:8888/
+      Carga__TamanoMaximoMb: 10
+    depends_on:
+      migrador: { condition: service_completed_successfully }
+      rabbitmq: { condition: service_healthy }
+      seaweedfs: { condition: service_started }
+
+  carga:
+    build: { context: ., dockerfile: src/CargaMasiva/Dockerfile }
+    environment:
+      <<: *dotnet
+      Seaweed__FilerUrl: http://seaweedfs:8888/
+    depends_on:
+      migrador: { condition: service_completed_successfully }
+      rabbitmq: { condition: service_healthy }
+      seaweedfs: { condition: service_started }
+
+  notificaciones:
+    build: { context: ., dockerfile: src/Notificaciones/Dockerfile }
+    environment:
+      <<: *dotnet
+      Smtp__Host: mailpit
+      Smtp__Puerto: 1025
+    depends_on:
+      migrador: { condition: service_completed_successfully }
+      rabbitmq: { condition: service_healthy }
+      mailpit: { condition: service_started }
+
+  gateway:
+    build: { context: ., dockerfile: src/Gateway/Dockerfile }
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Jwt__Key: ${JWT_KEY}
+    ports: ["${GATEWAY_PUERTO:-8080}:8080"]   # el único servicio .NET expuesto al host
+    depends_on: [auth, control, carga]
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_API_URL: http://localhost:${GATEWAY_PUERTO:-8080}
+    ports: ["5173:80"]
+    depends_on: [gateway]
+
+volumes:
+  pgdata:
+  seaweed:
